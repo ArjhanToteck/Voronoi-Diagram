@@ -1,19 +1,21 @@
-function worleyNoise(width, height, points, inverted = false) {
-	var noise = [];
+function WorleyNoise(width, height, points, inverted = false) {
+	this.width = width;
+	this.height = height;
+	this.points = points;
+	this.inverted = inverted;
 
-	for (var x = 0; x < width; x++) {
-		noise.push([]);
-		for (var y = 0; y < width; y++) {
+	this.getValue = function(x = 0, y = 0){
+		var distance = -1;
+		var secondDistance = -1;
 
-			var distance = -1;
-			var secondDistance = -1;
+		for (var i = 0; i < points.length; i++) {
+			var distanceFromPoint = distanceBetweenPoints([x, y], points[i]);
 
-			for (var i = 0; i < points.length; i++) {
-				if (distance < 0 || vector2Distance([x, y], points[i]) < distance) {
+				if (distance < 0 || distanceFromPoint < distance) {
 					secondDistance = distance;
-					distance = vector2Distance([x, y], points[i]);
-				} else if (secondDistance < 0 || vector2Distance([x, y], points[i]) < secondDistance) {
-					secondDistance = vector2Distance([x, y], points[i]);
+					distance = distanceFromPoint;
+				} else if (secondDistance < 0 || distanceFromPoint < secondDistance) {
+					secondDistance = distanceFromPoint;
 				}
 			}
 
@@ -23,13 +25,10 @@ function worleyNoise(width, height, points, inverted = false) {
 				distance = (secondDistance + 4) / distance;
 			}
 
-			noise[x].push(distance);
-		}
+			return distance;
 	}
-
-	return noise;
 }
 
-function vector2Distance(a, b) {
+function distanceBetweenPoints(a, b) {
 	return Math.hypot(a[0] - b[0], a[1] - b[1]);
 }
